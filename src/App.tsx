@@ -19,8 +19,10 @@ import {
 } from '@/utils/logic';
 
 function AppContent() {
-  const { loading, error, metrics, derivedSorted, addTask, updateTask, deleteTask, undoDelete, lastDeleted } = useTasksContext();
-  const handleCloseUndo = () => {};
+  const { loading, error, metrics, derivedSorted, addTask, updateTask, deleteTask, undoDelete, lastDeleted,clearUndo } = useTasksContext();
+const handleCloseUndo = () => {
+    clearUndo();
+  };
   const [q, setQ] = useState('');
   const [fStatus, setFStatus] = useState<string>('All');
   const [fPriority, setFPriority] = useState<string>('All');
@@ -32,7 +34,6 @@ function AppContent() {
     type,
     summary,
   }), []);
-
   const filtered = useMemo(() => {
     return derivedSorted.filter(t => {
       if (q && !t.title.toLowerCase().includes(q.toLowerCase())) return false;
