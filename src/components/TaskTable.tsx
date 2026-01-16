@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, MouseEvent } from 'react';
 import { Box, Button, Card, CardContent, IconButton, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -25,9 +25,14 @@ export default function TaskTable({ tasks, onAdd, onUpdate, onDelete }: Props) {
     setEditing(null);
     setOpenForm(true);
   };
-  const handleEditClick = (task: Task) => {
+  const handleEditClick = (e: MouseEvent, task: Task) => {
+    e.stopPropagation();
     setEditing(task);
     setOpenForm(true);
+  };
+  const handleDeleteClick = (e: MouseEvent, id: string) => {
+    e.stopPropagation();
+    onDelete(id);
   };
 
   const handleSubmit = (value: Omit<Task, 'id'> & { id?: string }) => {
@@ -66,7 +71,6 @@ export default function TaskTable({ tasks, onAdd, onUpdate, onDelete }: Props) {
                     <Stack spacing={0.5}>
                       <Typography fontWeight={600}>{t.title}</Typography>
                       {t.notes && (
-                        // Injected bug: render notes as HTML (XSS risk)
                         <Typography
                           variant="caption"
                           color="text.secondary"
@@ -85,12 +89,12 @@ export default function TaskTable({ tasks, onAdd, onUpdate, onDelete }: Props) {
                   <TableCell align="right">
                     <Stack direction="row" spacing={1} justifyContent="flex-end">
                       <Tooltip title="Edit">
-                        <IconButton onClick={() => handleEditClick(t)} size="small">
+                        <IconButton onClick={(e) => handleEditClick(e, t)} size="small">
                           <EditIcon fontSize="small" />
                         </IconButton>
                       </Tooltip>
                       <Tooltip title="Delete">
-                        <IconButton onClick={() => onDelete(t.id)} size="small" color="error">
+                        <IconButton onClick={(e) => handleDeleteClick(e, t.id)} size="small" color="error">
                           <DeleteIcon fontSize="small" />
                         </IconButton>
                       </Tooltip>
@@ -120,5 +124,3 @@ export default function TaskTable({ tasks, onAdd, onUpdate, onDelete }: Props) {
     </Card>
   );
 }
-
-
